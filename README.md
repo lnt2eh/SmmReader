@@ -1,4 +1,4 @@
-# SMMapper
+# SmmReader
 
 This project provides a kernel-mode driver for mapping and interacting with System Management RAM (SMRAM) and the bootloader at memory address `0x7C00`. Additionally, a user-mode application is included to search for a specific opcode (`E6 B2`), which corresponds to the instruction `out 0xB2, AL`. This project is designed to explore low-level Windows internals, hardware interactions, and system management features.
 
