@@ -1,7 +1,7 @@
 #include <ntddk.h>
 
-#define SMRAM_ADDRESS 0x30000 // SMRAMBASE - CS base.address = 0x30000 quando está no modo SMM
-#define LOADER_ADDRESS 0x7C00 // Endereço físico onde o bootloader é carregado
+#define SMRAM_ADDRESS 0x30000 // SMRAMBASE - CS base.address = 0x30000 quando estÃ¡ no modo SMM
+#define LOADER_ADDRESS 0x7C00 // EndereÃ§o fÃ­sico onde o bootloader Ã© carregado
 
 #define ES_SELECTOR_OFFSET 0xFE00 // Seletor de segmento do registrador ES
 #define CS_SELECTOR_OFFSET 0x10 // Seletor de segmento do registrador CS
@@ -20,7 +20,7 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 {
     UNREFERENCED_PARAMETER(RegistryPath);
 
-    // Declarações e inicializações
+    // DeclaraÃ§Ãµes e inicializaÃ§Ãµes
     PHYSICAL_ADDRESS PhysicalAddressSearch = { 0 };
     PUCHAR ReturnedVirtualAddress = NULL;
     USHORT CsSelector = 0;
@@ -30,19 +30,19 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
     USHORT FsSelector = 0;
     USHORT EsSelector = 0;
 
-    // Código do Driver
+    // CÃ³digo do Driver
     PhysicalAddressSearch.QuadPart = SMRAM_ADDRESS + ES_SELECTOR_OFFSET;
     ReturnedVirtualAddress = MmMapIoSpace(PhysicalAddressSearch, 50, MmNonCached);
     if (ReturnedVirtualAddress == NULL)
     {
-        KdPrint(("Endereço Virtual não pode ser mapeado\n"));
+        KdPrint(("EndereÃ§o Virtual nÃ£o pode ser mapeado\n"));
         return STATUS_UNSUCCESSFUL;
     }
     KdPrint(("SMRAM Address: 0x%x\n", SMRAM_ADDRESS));
     KdPrint(("SMRAM Status-Save Area: 0x%llx  - Mapeado para %p\n", PhysicalAddressSearch.QuadPart, ReturnedVirtualAddress));
     if (MmIsAddressValid(ReturnedVirtualAddress))
     {
-        KdPrint(("Endereço %p é VÁLIDO\n", ReturnedVirtualAddress));
+        KdPrint(("EndereÃ§o %p Ã© VÃLIDO\n", ReturnedVirtualAddress));
         // Mapeando os seletores
         KdPrint(("Mapeando Seletores\n"));
         EsSelector = *((USHORT*)(ReturnedVirtualAddress));
@@ -61,10 +61,10 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
         KdPrint(("\t\\___Value in GS(0x3FE%X) - Selector(0x%02X)\n", GS_SELECTOR_OFFSET, GsSelector));
     }
     else {
-        KdPrint(("O endereço mapeado não é válido\n"));
+        KdPrint(("O endereÃ§o mapeado nÃ£o Ã© vÃ¡lido\n"));
     }
 
-    MmUnmapIoSpace(ReturnedVirtualAddress, 50); // Realizar o desmapeamento do endereço virtual
+    MmUnmapIoSpace(ReturnedVirtualAddress, 50); // Realizar o desmapeamento do endereÃ§o virtual
 
     KdPrint(("----------------------------------\n"));
     KdPrint(("Iniciando mapeamento do Bootloader\n"));
@@ -75,10 +75,10 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
     ReturnedVirtualAddress = MmMapIoSpace(PhysicalAddressSearch, 512, MmNonCached);
     if (ReturnedVirtualAddress == NULL)
     {
-        KdPrint(("O endereço não pode ser mapeado\n"));
+        KdPrint(("O endereÃ§o nÃ£o pode ser mapeado\n"));
         return STATUS_UNSUCCESSFUL;
     }
-    KdPrint(("Endereço Mapeado: %p\n", ReturnedVirtualAddress));
+    KdPrint(("EndereÃ§o Mapeado: %p\n", ReturnedVirtualAddress));
     if (MmIsAddressValid(ReturnedVirtualAddress))
     {
         if (ReturnedVirtualAddress[510] == 0x55 && ReturnedVirtualAddress[511] == 0xAA)
@@ -93,11 +93,11 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
     }
     else
     {
-        KdPrint(("Endereço de memória retornado não é válido\n"));
+        KdPrint(("EndereÃ§o de memÃ³ria retornado nÃ£o Ã© vÃ¡lido\n"));
     }
 
     MmUnmapIoSpace(ReturnedVirtualAddress, 512);
-    WRITE_PORT_UCHAR((PUCHAR)0xB2, 0xFE);
+    // WRITE_PORT_UCHAR((PUCHAR)0xB2, 0xFE); Fins didÃ¡ticos para teste
     DriverObject->DriverUnload = kernelUnload;
     return STATUS_SUCCESS;
 }
